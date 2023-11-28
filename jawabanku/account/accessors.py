@@ -11,3 +11,7 @@ class AccountAccessors:
 
             account.save()
             return account
+
+    def change_password(self, account: Account, new_password: str) -> None:
+        account.set_password(new_password)
+        account.save()

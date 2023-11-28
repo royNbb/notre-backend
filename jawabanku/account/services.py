@@ -1,5 +1,10 @@
 from typing import Optional
 
+from django.contrib.auth import authenticate
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ValidationError
+
 from .accessors import AccountAccessors
 from .models import Account
 from .serializers import AccountUpdateSerializer
@@ -24,3 +29,14 @@ class AccountServices:
             return self.account_accessors.update_profile(account, **data)
 
         return None
+
+    def change_password(self, account: Account, old_password: str, new_password: str) -> None:
+        if authenticate(username=account.username, password=old_password) is None:
+            raise PermissionDenied('The given password does not match.')
+
+        try:
+            validate_password(password=new_password, user=account)
+            self.account_accessors.change_password(account, new_password)
+
+        except ValidationError as e:
+            raise e
