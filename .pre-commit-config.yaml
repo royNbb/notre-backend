@@ -1,0 +1,50 @@
+---
+fail_fast: true
+
+default_language_version:
+  python: python3.9
+
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: 'v4.1.0'
+  hooks:
+    - id: check-ast
+    - id: check-builtin-literals
+    - id: check-case-conflict
+    - id: check-docstring-first
+    - id: check-executables-have-shebangs
+    - id: check-json
+    - id: check-merge-conflict
+    - id: check-shebang-scripts-are-executable
+    - id: check-symlinks
+    - id: check-toml
+    - id: check-vcs-permalinks
+    - id: check-xml
+    - id: debug-statements
+    - id: detect-aws-credentials
+    - id: destroyed-symlinks
+    - id: end-of-file-fixer
+    - id: fix-byte-order-marker
+    - id: mixed-line-ending
+    - id: trailing-whitespace
+#end pre-commit-hooks
+
+- repo: local
+  hooks:
+  - id: isort
+    name: isort python imports
+    entry: isort --sl
+    language: system
+    types: [python]
+
+  - id: add-trailing-comma
+    name: add trailing comma to python code
+    entry: add-trailing-comma
+    language: system
+    types: [python]
+
+  - id: flake8
+    name: check code style using flake8
+    entry: flake8
+    language: system
+    types: [python]
