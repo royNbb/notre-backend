@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'django_admin_logs',
 
     'account',
+    'common',
 ]
 
 MIDDLEWARE = [

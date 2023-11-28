@@ -31,6 +31,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(blank=False, null=False, unique=True, db_index=True)
     username = models.CharField(max_length=128, blank=False, null=False, unique=True, db_index=True)
+    name = models.CharField(max_length=128, blank=False, null=False)
     role = models.CharField(max_length=15, choices=Role.choices, default=Role.MEMBER)
 
     is_active = models.BooleanField(default=True)
