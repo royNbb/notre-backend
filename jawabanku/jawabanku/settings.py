@@ -24,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def envbool(s: str, default: str) -> bool:
-    v = os.getenv(s, default=default)
-    if v not in ('', 'True', 'False'):
-        msg = "Unexpected value %s=%s, use 'True' or 'False'" % (s, v)
-        raise Exception(msg)
+  v = os.getenv(s, default=default)
+  if v not in ('', 'True', 'False'):
+    msg = "Unexpected value %s=%s, use 'True' or 'False'" % (s, v)
+    raise Exception(msg)
 
-    return v == 'True'
+  return v == 'True'
 
 
 # Quick-start development settings - unsuitable for production
@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'django_admin_logs',
 
     'account',
+    'material',
     'common',
 ]
 
@@ -248,4 +249,4 @@ SIMPLE_JWT = {
 
 
 if DEVELOPMENT_ENVIRONMENT:
-    LOGGING['root']['handlers'].append('console')
+  LOGGING['root']['handlers'].append('console')
