@@ -1,7 +1,6 @@
 # Development folders
 /static/
 /static-*/
-/requirements.txt
 
 
 .ssm_cache.json
