@@ -64,6 +64,9 @@ INSTALLED_APPS = [
 
     'account',
     'material',
+    'comment',
+    'report',
+    'history',
     'common',
 ]
 
