@@ -3,9 +3,9 @@ from django.contrib.admin import register
 
 from jawabanku.admin import admin_site
 
-from .models import History
+from .models import UserHistory
 
 
-@register(History, site=admin_site)
-class HistoryAdmin(ModelAdmin):
+@register(UserHistory, site=admin_site)
+class UserHistoryAdmin(ModelAdmin):
   list_display = ['id', 'owner', 'history_of']

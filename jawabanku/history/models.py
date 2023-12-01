@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from account.models import Account
 
 
-class History(models.Model):
+class UserHistory(models.Model):
   # TODO: fix allowed_related_models once learning material model is added
   owner = models.ForeignKey(Account, on_delete=models.CASCADE)
 
@@ -32,4 +32,4 @@ class History(models.Model):
     ]
 
   def __str__(self) -> str:
-    return f'History(owner={self.owner}, type={self.type})'
+    return f'UserHistory(owner={self.owner}, type={self.history_of})'
