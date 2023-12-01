@@ -6,6 +6,11 @@ from .models import UserHistory
 
 
 class HistoryAccessor:
+  def get_history_of_account(self, account: Account) -> QuerySet['UserHistory']:
+    return UserHistory.objects.filter(
+        owner=account,
+    )
+
   def create_history(self, account: Account, **validated_data) -> 'UserHistory':
     return UserHistory.objects.create(
         owner=account,
@@ -14,9 +19,4 @@ class HistoryAccessor:
             model=validated_data.get('related_model_name'),
         ),
         object_id=validated_data.get('related_model_id'),
-    )
-
-  def get_history_of_account(self, account: Account) -> QuerySet['UserHistory']:
-    return UserHistory.objects.filter(
-        owner=account,
     )
