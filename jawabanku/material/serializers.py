@@ -1,8 +1,14 @@
 from rest_framework import serializers
 
 from account.serializers import AccountSerializer
-from .models import Category, Material
-from rest_framework.serializers import IntegerField, CharField, ListField, PrimaryKeyRelatedField
+from .models import Category, Material, Tag
+from rest_framework.serializers import IntegerField, CharField, PrimaryKeyRelatedField
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ['id', 'name']
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -14,10 +20,11 @@ class CategorySerializer(serializers.ModelSerializer):
 class MaterialSerializer(serializers.ModelSerializer):
     owner = AccountSerializer(read_only=True)
     categories = CategorySerializer(read_only=True, many=True)
+    tags = TagSerializer(read_only=True, many=True)
 
     class Meta:
         model = Material
-        fields = ['id', 'slug', 'title', 'description', 'content', 'owner', 'categories']
+        fields = ['id', 'slug', 'title', 'description', 'content', 'owner', 'categories', 'tags']
 
 
 class CreateMaterialSerializer(serializers.ModelSerializer):
@@ -26,7 +33,20 @@ class CreateMaterialSerializer(serializers.ModelSerializer):
     content = CharField(required=True)
     owner_id = IntegerField(required=True)
     categories = PrimaryKeyRelatedField(queryset=Category.objects.all(), many=True)
-    
+    tags = PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True, required=False)
+
     class Meta:
         model = Material
-        fields = ['title', 'description', 'content', 'owner_id', 'categories']
+        fields = ['title', 'description', 'content', 'owner_id', 'categories', 'tags']
+
+
+class UpdateMaterialSerializer(serializers.ModelSerializer):
+    title = CharField(required=False)
+    description = CharField(required=False)
+    content = CharField(required=False)
+    categories = PrimaryKeyRelatedField(queryset=Category.objects.all(), many=True, required=False)
+    tags = PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True, required=False)
+
+    class Meta:
+        model = Material
+        fields = ['title', 'description', 'content', 'categories', 'tags']

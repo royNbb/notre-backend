@@ -1,9 +1,18 @@
 from typing import Optional
 
 from account.models import Account
-from .models import Category, Material
+from .models import Category, Material, Tag
 from django.db import transaction
 from django.db.models import QuerySet
+
+
+class TagAccessors:
+    def get_tag_by_id(self, tag_id: int) -> Optional[Tag]:
+        try:
+            tag = Tag.objects.get(pk=tag_id)
+            return tag
+        except Tag.DoesNotExist:
+            return None
 
 
 class CategoryAccessors:
@@ -38,11 +47,40 @@ class MaterialAccessors:
                 content=validated_data.get("content"),
                 owner=account,
             )
-
-            print(material)
             if validated_data.get("categories"):
                 material.categories.set(validated_data.get("categories"))
+            if validated_data.get("tags"):
+                material.tags.set(validated_data.get("tags"))
             return material
         except Exception as e:
-            print(e)
             return None
+
+    def update_material(self, material: Material, **validated_data) -> Optional[Material]:
+        try:
+            with transaction.atomic():
+                for key, value in validated_data.items():
+                    if key != 'categories' and key != 'tags':
+                        setattr(material, key, value)
+
+                categories = validated_data.get('categories')
+                tags = validated_data.get('tags')
+
+                if categories is not None:
+                    material.categories.set(categories)
+
+                if tags is not None:
+                    material.tags.set(tags)
+                else:
+                    material.tags.clear()
+
+                material.save()
+                return material
+        except Exception as e:
+            return None
+
+    def delete_material(self, material: Material) -> bool:
+        try:
+            material.delete()
+            return True
+        except Exception as e:
+            return False
