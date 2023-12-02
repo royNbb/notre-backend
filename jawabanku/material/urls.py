@@ -1,8 +1,8 @@
 from rest_framework import routers
 
-from .views import AccountViewSet
+from .views import MaterialViewSet
 
 router = routers.SimpleRouter()
-router.register(r'users', AccountViewSet, basename='account')
+router.register(r'material', MaterialViewSet, basename='material')
 
 urlpatterns = router.urls
