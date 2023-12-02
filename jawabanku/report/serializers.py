@@ -24,4 +24,4 @@ class ReportSerializer(ModelSerializer):
 
   class Meta:
     model = Report
-    exclude = ['id', 'description', 'report_type', 'report_of', 'created_at']
+    fields = ['id', 'description', 'report_type', 'report_of', 'created_at']
