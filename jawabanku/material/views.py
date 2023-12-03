@@ -1,14 +1,94 @@
 from rest_framework.viewsets import ViewSet
 
-from .serializers import MaterialSerializer
+from .serializers import CategorySerializer, MaterialSerializer, TagSerializer
 from common.utils import error_response_format
 from common.utils import success_response_format
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND
 from rest_framework.viewsets import ViewSet
-from .services import MaterialServices
+from .services import CategoryServices, MaterialServices, TagServices
 from .permissions import IsMaterialOwner
 from rest_framework.exceptions import PermissionDenied
+
+
+class TagViewSet(ViewSet):
+    tag_service = TagServices()
+
+    def list(self, request) -> Response:
+        try:
+            tags = self.tag_service.get_all_tags()
+            serializer = TagSerializer(tags, many=True)
+
+            return success_response_format(
+                data=serializer.data,
+                status_code=HTTP_200_OK,
+            )
+        except Exception as e:
+            return error_response_format(
+                message=str(e),
+                status_code=HTTP_400_BAD_REQUEST,
+            )
+
+    def retrieve(self, request, pk=None) -> Response:
+        try:
+            tag = self.tag_service.get_tag_by_id(pk)
+
+            if not tag:
+                return error_response_format(
+                    message=f" tag with ID {pk} not found",
+                    status_code=HTTP_404_NOT_FOUND,
+                )
+
+            serializer = TagSerializer(tag)
+            return success_response_format(
+                data=serializer.data,
+                status_code=HTTP_200_OK,
+            )
+        except Exception as e:
+            return error_response_format(
+                message=str(e),
+                status_code=HTTP_400_BAD_REQUEST,
+            )
+
+
+class CategoryViewSet(ViewSet):
+    category_service = CategoryServices()
+
+    def list(self, request) -> Response:
+        try:
+            categories = self.category_service.get_all_categories()
+            serializer = CategorySerializer(categories, many=True)
+
+            return success_response_format(
+                data=serializer.data,
+                status_code=HTTP_200_OK,
+            )
+        except Exception as e:
+            return error_response_format(
+                message=str(e),
+                status_code=HTTP_400_BAD_REQUEST,
+            )
+
+    def retrieve(self, request, pk=None) -> Response:
+        try:
+            category = self.category_service.get_category_by_id(pk)
+
+            if not category:
+                return error_response_format(
+                    message=f" category with ID {pk} not found",
+                    status_code=HTTP_404_NOT_FOUND,
+                )
+
+            serializer = CategorySerializer(category)
+            return success_response_format(
+                data=serializer.data,
+                status_code=HTTP_200_OK,
+            )
+        except Exception as e:
+            return error_response_format(
+                message=str(e),
+                status_code=HTTP_400_BAD_REQUEST,
+            )
 
 
 class MaterialViewSet(ViewSet):
@@ -17,7 +97,12 @@ class MaterialViewSet(ViewSet):
 
     def list(self, request) -> Response:
         try:
-            materials = self.material_service.get_all_materials()
+            title_query = self.request.query_params.get('title', "")
+            category_query = self.request.query_params.getlist('category', [])
+            tag_query = self.request.query_params.getlist('tag', [])
+
+            materials = self.material_service.get_all_materials(title_query, category_query, tag_query)
+
             serializer = MaterialSerializer(materials, many=True)
 
             return success_response_format(

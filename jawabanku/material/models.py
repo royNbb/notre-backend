@@ -40,7 +40,7 @@ class Material(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.slug = slugify(self.title, self.id)
+        self.slug = slugify(f'{self.title} {self.id}')
 
     def __str__(self):
         return self.title
