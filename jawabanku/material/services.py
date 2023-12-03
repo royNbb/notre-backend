@@ -13,6 +13,12 @@ class TagServices:
     def get_tag_by_id(self, tag_id: int) -> Optional[Tag]:
         return self.tag_accessors.get_tag_by_id(tag_id)
 
+    def get_all_tags(self) -> Optional[QuerySet[Tag]]:
+        return self.tag_accessors.get_all_tags()
+
+    def get_tag_by_name(self, name: str) -> Optional[Tag]:
+        return self.tag_accessors.get_tag_by_name(name)
+
 
 class CategoryServices:
     category_accessors = CategoryAccessors()
@@ -20,15 +26,21 @@ class CategoryServices:
     def get_category_by_id(self, category_id: int) -> Optional[Category]:
         return self.category_accessors.get_category_by_id(category_id)
 
+    def get_all_categories(self) -> Optional[QuerySet[Category]]:
+        return self.category_accessors.get_all_categories()
+
+    def get_category_by_name(self, name: str) -> Optional[Category]:
+        return self.category_accessors.get_category_by_name(name)
+
 
 class MaterialServices:
     material_accessors = MaterialAccessors()
 
-    def get_all_materials(self) -> Optional[QuerySet[Material]]:
-        return self.material_accessors.get_all_materials()
-
     def get_material_by_id(self, material_id: int) -> Optional[Material]:
         return self.material_accessors.get_material_by_id(material_id)
+
+    def get_all_materials(self, title_query, category_query, tag_query) -> Optional[QuerySet[Material]]:
+        return self.material_accessors.get_all_materials(title_query, category_query, tag_query)
 
     def create_material(self, account: Account, **kwargs) -> Optional[Material]:
         parsed_data = {}

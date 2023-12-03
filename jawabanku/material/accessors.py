@@ -4,12 +4,27 @@ from account.models import Account
 from .models import Category, Material, Tag
 from django.db import transaction
 from django.db.models import QuerySet
+from django.db.models import Q
 
 
 class TagAccessors:
     def get_tag_by_id(self, tag_id: int) -> Optional[Tag]:
         try:
             tag = Tag.objects.get(pk=tag_id)
+            return tag
+        except Tag.DoesNotExist:
+            return None
+
+    def get_all_tags(self) -> Optional[QuerySet[Tag]]:
+        try:
+            tags = Tag.objects.all()
+            return tags
+        except Tag.DoesNotExist:
+            return None
+
+    def get_tag_by_name(self, name: str) -> Optional[Tag]:
+        try:
+            tag = Tag.objects.get(name=name)
             return tag
         except Tag.DoesNotExist:
             return None
@@ -23,19 +38,40 @@ class CategoryAccessors:
         except Category.DoesNotExist:
             return None
 
-
-class MaterialAccessors:
-    def get_all_materials(self) -> Optional[QuerySet[Material]]:
+    def get_all_categories(self) -> Optional[QuerySet[Category]]:
         try:
-            materials = Material.objects.all()
-            return materials
-        except Material.DoesNotExist:
+            categories = Category.objects.all()
+            return categories
+        except Category.DoesNotExist:
             return None
 
+    def get_category_by_name(self, name: str) -> Optional[Category]:
+        try:
+            category = Category.objects.get(name=name)
+            return category
+        except Category.DoesNotExist:
+            return None
+
+
+class MaterialAccessors:
     def get_material_by_id(self, material_id: int) -> Optional[Material]:
         try:
             material = Material.objects.get(pk=material_id)
             return material
+        except Material.DoesNotExist:
+            return None
+
+    def get_all_materials(self, title_query, category_queries, tag_queries) -> Optional[QuerySet[Material]]:
+        try:
+            materials = Material.objects.all()
+
+            if title_query:
+                materials = materials.filter(Q(title__icontains=title_query))
+            if category_queries:
+                materials = materials.filter(Q(categories__name__in=category_queries)).distinct()
+            if tag_queries:
+                materials = materials.filter(Q(tags__name__in=tag_queries)).distinct()
+            return materials
         except Material.DoesNotExist:
             return None
 
@@ -51,6 +87,8 @@ class MaterialAccessors:
                 material.categories.set(validated_data.get("categories"))
             if validated_data.get("tags"):
                 material.tags.set(validated_data.get("tags"))
+
+            material.save()
             return material
         except Exception as e:
             return None
