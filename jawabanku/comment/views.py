@@ -19,35 +19,44 @@ class CommentViewSet(ViewSet):
     comment_service = CommentServices()
     permission_classes = [IsCommentOwner]
 
-    def list_material(self, request) -> Response:
+    def list(self, request) -> Response:
         try:
-            material_query = self.request.query_params.get('material', "")
-            comments = self.comment_service.get_comments_by_material(material_query)
+            is_by_owner_query = self.request.query_params.get('is_by_owner', "")
 
-            serializer = CommentSerializer(comments, many=True)
+            if is_by_owner_query:
+                #get by owner 
+                try:
+                    owner_query = self.request.query_params.get('owner', "")
+                    comments = self.comment_service.get_comments_by_owner(owner_query)
 
-            return success_response_format(
-                data=serializer.data,
-                status_code=HTTP_200_OK,
-            )
-        except Exception as e:
-            return error_response_format(
-                message=str(e),
-                status_code=HTTP_400_BAD_REQUEST,
-            )
-    
-    #reconsider need
-    def list_owner(self, request) -> Response:
-        try:
-            owner_query = self.request.query_params.get('owner', "")
-            comments = self.comment_service.get_comments_by_owner(owner_query)
+                    serializer = CommentSerializer(comments, many=True)
 
-            serializer = CommentSerializer(comments, many=True)
+                    return success_response_format(
+                        data=serializer.data,
+                        status_code=HTTP_200_OK,
+                    )
+                except Exception as e:
+                    return error_response_format(
+                        message=str(e),
+                        status_code=HTTP_400_BAD_REQUEST,
+                    )
+            else:
+                #get by material comments
+                try:
+                    material_query = self.request.query_params.get('material', "")
+                    comments = self.comment_service.get_comments_by_material(material_query)
 
-            return success_response_format(
-                data=serializer.data,
-                status_code=HTTP_200_OK,
-            )
+                    serializer = CommentSerializer(comments, many=True)
+
+                    return success_response_format(
+                        data=serializer.data,
+                        status_code=HTTP_200_OK,
+                    )
+                except Exception as e:
+                    return error_response_format(
+                        message=str(e),
+                        status_code=HTTP_400_BAD_REQUEST,
+                    )                
         except Exception as e:
             return error_response_format(
                 message=str(e),
@@ -80,16 +89,22 @@ class CommentViewSet(ViewSet):
             comment = self.comment_service.create_comment(request.user, **request.data)
             if comment:
                 serializer = CommentSerializer(comment)
+                print('METHOD CREATE SUCCESS IN VIEWS')
+                print(serializer.data)
                 return success_response_format(
                     data=serializer.data,
                     status_code=HTTP_201_CREATED,
                 )
             else:
+                print('METHOD CREATE GO TO ELSE ERROR RESPONSE FORMAT IN VIEWS')
+                
                 return error_response_format(
                     message="Failed to create comment",
                     status_code=HTTP_400_BAD_REQUEST,
                 )
         except Exception as e:
+            print('METHOD CREATE GO TO EXCEPTION ERROR RESPONSE FORMAT IN VIEWS')
+
             return error_response_format(
                 message=str(e),
                 status_code=HTTP_400_BAD_REQUEST,

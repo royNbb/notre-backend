@@ -35,12 +35,14 @@ class CommentAccessors:
 
     def create_comment(self, account: Account, **validated_data) -> Optional[Comment]:
         try:
+            print('ACCESSORS CREATE')
             comment = Comment.objects.create(
                 owner=account,
                 material=validated_data.get("material"),
                 content=validated_data.get("content"),
             )
             comment.save()
+            print('ACCESSORS saved')
             return comment
         except Exception as e:
             return None
