@@ -5,6 +5,11 @@ from .models import Category, Material, Tag
 from rest_framework.serializers import IntegerField, CharField, PrimaryKeyRelatedField
 
 
+class EpochDateTimeField(serializers.Field):
+    def to_representation(self, value):
+        return value.timestamp() if value else None
+
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -21,12 +26,12 @@ class MaterialSerializer(serializers.ModelSerializer):
     owner = AccountSerializer(read_only=True)
     categories = CategorySerializer(read_only=True, many=True)
     tags = TagSerializer(read_only=True, many=True)
-    created_at = serializers.DateTimeField(format="%d %b %Y %H:%M:%S")
-    updated_at = serializers.DateTimeField(format="%d %b %Y %H:%M:%S")
-
+    created_at = EpochDateTimeField()
+    updated_at = EpochDateTimeField()
+    
     class Meta:
         model = Material
-        fields = ['id', 'slug', 'title', 'description', 'content', 'owner', 'categories', 'tags', "created_at", 'updated_at']
+        fields = ['id', 'slug', 'title', 'description', 'content', 'owner', 'categories', 'tags', 'created_at', 'updated_at']
 
 
 class CreateMaterialSerializer(serializers.ModelSerializer):

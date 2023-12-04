@@ -19,4 +19,4 @@ class CategoryAdmin(ModelAdmin):
 
 @register(Material, site=admin_site)
 class MaterialAdmin(ModelAdmin):
-    list_display = ['id', 'slug', 'title', 'description', 'content', 'owner']
+    list_display = ['id', 'slug', 'title', 'description', 'content', 'owner', 'created_at', 'updated_at']
