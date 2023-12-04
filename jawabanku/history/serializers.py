@@ -2,13 +2,16 @@ from rest_framework.serializers import IntegerField, CharField
 from rest_framework.serializers import EmailField
 from rest_framework.serializers import ModelSerializer, SerializerMethodField, RelatedField
 
-from .models import UserHistory
-
 from comment.models import Comment
 from comment.serializers import CommentSerializer
 
 from report.models import Report
 from report.serializers import ReportSerializer
+
+from material.models import Material
+from material.serializers import MaterialSerializer
+
+from .models import UserHistory
 
 
 class HistoryRelatedField(RelatedField):
@@ -17,6 +20,8 @@ class HistoryRelatedField(RelatedField):
       serializer = CommentSerializer(value, many=False)
     elif isinstance(value, Report):
       serializer = ReportSerializer(value, many=False)
+    elif isinstance(value, Material):
+      serializer = MaterialSerializer(value, many=False)
     else:
       raise Exception("Unexpected type of history related model")
     return serializer.data
