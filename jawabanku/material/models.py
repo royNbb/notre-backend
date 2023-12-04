@@ -26,13 +26,13 @@ class Category(models.Model):
     def __str__(self) -> str:
         return f'Category(name={self.name}, type={self.type})'
 
-
+#TODO: temporary blank
 class Material(models.Model):
     slug = models.SlugField(max_length=255, db_index=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
     content = models.TextField()
-    owner = models.ForeignKey(Account, on_delete=models.CASCADE)
+    owner = models.ForeignKey(Account, on_delete=models.CASCADE, blank=True, null=True)
     categories = models.ManyToManyField(Category)
     tags = models.ManyToManyField(Tag, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
