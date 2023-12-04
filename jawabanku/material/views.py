@@ -1,57 +1,39 @@
 from rest_framework.viewsets import ViewSet
 
 import os
-import uuid
-import boto3
 
-from mimetypes import guess_type
 from .serializers import CategorySerializer, MaterialSerializer, TagSerializer
 from common.utils import error_response_format
 from common.utils import success_response_format
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND
 from rest_framework.viewsets import ViewSet
-from .services import CategoryServices, MaterialServices, TagServices
+from .services import CategoryServices, FileUploadService, MaterialServices, TagServices
 from .permissions import IsMaterialOwner
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.parsers import MultiPartParser
-
-s3 = boto3.client('s3',
-                  region_name=os.getenv('DO_REGION_NAME'),
-                  endpoint_url=os.getenv('DO_ENDPOINT_URL'),
-                  aws_access_key_id=os.getenv('DO_SPACES_KEY'),
-                  aws_secret_access_key=os.getenv('DO_SPACES_SECRET'))
+from django.core.exceptions import ValidationError
 
 
-class UploadFileViewSet(ViewSet):
+class FileUploadViewSet(ViewSet):
     parser_classes = [MultiPartParser]
+    file_upload_service = FileUploadService()
 
     def create(self, request):
         try:
             BUCKET_NAME = os.getenv('DO_BUCKET_NAME')
             file_obj = request.data['file']
-            random_hex = uuid.uuid4().hex
 
-            object_name = f'{random_hex}-{file_obj.name}'
-
-            content_type, _ = guess_type(file_obj.name)
-            content_type = content_type or 'application/octet-stream'
-
-            s3.upload_fileobj(
-                file_obj,
-                BUCKET_NAME,
-                object_name,
-                ExtraArgs={'ACL': 'public-read', 'ContentType': content_type}
-            )
-
-            file_url = f"https://{BUCKET_NAME}.{s3.meta.region_name}.digitaloceanspaces.com/{object_name}"
+            file_data = FileUploadService.upload_file(file_obj, BUCKET_NAME)
 
             return success_response_format(
-                data={
-                    "file_url": file_url,
-                    "content_type": content_type
-                },
+                data=file_data,
                 status_code=HTTP_200_OK,
+            )
+        except ValidationError as ve:
+            return error_response_format(
+                message=str(ve.message),
+                status_code=HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             return error_response_format(
