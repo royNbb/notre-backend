@@ -1,14 +1,45 @@
 from rest_framework.viewsets import ViewSet
 
+import os
+
 from .serializers import CategorySerializer, MaterialSerializer, TagSerializer
 from common.utils import error_response_format
 from common.utils import success_response_format
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND
 from rest_framework.viewsets import ViewSet
-from .services import CategoryServices, MaterialServices, TagServices
+from .services import CategoryServices, FileUploadService, MaterialServices, TagServices
 from .permissions import IsMaterialOwner
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.parsers import MultiPartParser
+from django.core.exceptions import ValidationError
+
+
+class FileUploadViewSet(ViewSet):
+    parser_classes = [MultiPartParser]
+    file_upload_service = FileUploadService()
+
+    def create(self, request):
+        try:
+            BUCKET_NAME = os.getenv('DO_BUCKET_NAME')
+            file_obj = request.data['file']
+
+            file_data = FileUploadService.upload_file(file_obj, BUCKET_NAME)
+
+            return success_response_format(
+                data=file_data,
+                status_code=HTTP_200_OK,
+            )
+        except ValidationError as ve:
+            return error_response_format(
+                message=str(ve.message),
+                status_code=HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            return error_response_format(
+                message=str(e),
+                status_code=HTTP_400_BAD_REQUEST,
+            )
 
 
 class TagViewSet(ViewSet):
