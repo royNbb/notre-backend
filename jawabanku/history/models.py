@@ -7,10 +7,9 @@ from account.models import Account
 
 
 class UserHistory(models.Model):
-  # TODO: fix allowed_related_models once learning material model is added
   owner = models.ForeignKey(Account, on_delete=models.CASCADE)
 
-  allowed_related_models = models.Q(app_label='comment', model='comment') | models.Q(app_label='report', model='report')
+  allowed_related_models = models.Q(app_label='comment', model='comment') | models.Q(app_label='report', model='report') | models.Q(app_label='material', model='material')
   content_type = models.ForeignKey(
       ContentType,
       on_delete=models.CASCADE,

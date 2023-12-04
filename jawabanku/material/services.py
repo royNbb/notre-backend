@@ -6,6 +6,60 @@ from .models import Category, Material, Tag
 from .accessors import CategoryAccessors, MaterialAccessors, TagAccessors
 from django.db.models import QuerySet
 
+import uuid
+from django.core.exceptions import ValidationError
+from mimetypes import guess_type
+
+import os
+import uuid
+import boto3
+
+ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'ppt', 'pptx', 'xls', 'xlsx', 'txt', 'ipynb', 'py', 'java', 'jav', 'c', 'cpp', 'cs', 'go', 'js', 'ts', 'jsx', 'tsx', 'html', 'css', 'php', 'sql', 'swift', 'rb', 'json', 'xml', }
+MAX_FILE_SIZE_MB = 20
+
+s3 = boto3.client('s3',
+                  region_name=os.getenv('DO_REGION_NAME'),
+                  endpoint_url=os.getenv('DO_ENDPOINT_URL'),
+                  aws_access_key_id=os.getenv('DO_SPACES_KEY'),
+                  aws_secret_access_key=os.getenv('DO_SPACES_SECRET'))
+
+
+class FileUploadService:
+    def upload_file(file_obj, bucket_name):
+        try:
+            random_hex = uuid.uuid4().hex
+
+            file_extension = file_obj.name.split('.')[-1].lower()
+            if file_extension not in ALLOWED_EXTENSIONS:
+                raise ValidationError("Invalid file extension.")
+
+            max_size_bytes = MAX_FILE_SIZE_MB * 1024 * 1024
+            if file_obj.size > max_size_bytes:
+                raise ValidationError("File size exceeds the maximum allowed.")
+
+            object_name = f'{random_hex}-{file_obj.name}'
+
+            content_type, _ = guess_type(file_obj.name)
+            content_type = content_type or 'application/octet-stream'
+
+            s3.upload_fileobj(
+                file_obj,
+                bucket_name,
+                object_name,
+                ExtraArgs={'ACL': 'public-read', 'ContentType': content_type}
+            )
+
+            file_url = f"https://{bucket_name}.{s3.meta.region_name}.digitaloceanspaces.com/{object_name}"
+
+            return {
+                "file_url": file_url,
+                "content_type": content_type
+            }
+        except ValidationError as ve:
+            raise ve
+        except Exception as e:
+            raise e
+
 
 class TagServices:
     tag_accessors = TagAccessors()
