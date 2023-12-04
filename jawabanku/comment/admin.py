@@ -8,4 +8,4 @@ from .models import Comment
 
 @register(Comment, site=admin_site)
 class CommentAdmin(ModelAdmin):
-  list_display = ['id', 'owner', 'content']
+  list_display = ['id', 'owner', 'material', 'content']
