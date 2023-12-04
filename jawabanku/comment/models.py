@@ -5,7 +5,7 @@ from account.models import Account
 from material.models import Material
 #TODO: temporary blank
 class Comment(models.Model):
-  owner = models.ForeignKey(Account, on_delete=models.CASCADE, blank=True, null=True)
+  owner = models.ForeignKey(Account, on_delete=models.CASCADE)
   material = models.ForeignKey(Material, on_delete=models.CASCADE, to_field='id')  # Specify the field to use for the relationship  
   
   content = models.TextField()

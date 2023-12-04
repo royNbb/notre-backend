@@ -21,17 +21,13 @@ class CommentServices:
     def create_comment(self, account: Account, **kwargs) -> Optional[Comment]:
         parsed_data = {}
         parsed_data['owner_id'] = account.id
-        print(account.id)
         if kwargs.get('material', None):
             parsed_data['material'] = kwargs.get('material')
-            print(f'Material {parsed_data["material"]}')
         if kwargs.get('content', None):
             parsed_data['content'] = kwargs.get('content')
-            print(f'Content {parsed_data["content"]}')
 
         serialized_req = CreateCommentSerializer(data=parsed_data, many=False)
         if serialized_req.is_valid():
-            print('SUCCESS')
             data = serialized_req.validated_data
             return self.comment_accessors.create_comment(account, **data)
 

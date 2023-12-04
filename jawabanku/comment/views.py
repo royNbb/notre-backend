@@ -89,22 +89,16 @@ class CommentViewSet(ViewSet):
             comment = self.comment_service.create_comment(request.user, **request.data)
             if comment:
                 serializer = CommentSerializer(comment)
-                print('METHOD CREATE SUCCESS IN VIEWS')
-                print(serializer.data)
                 return success_response_format(
                     data=serializer.data,
                     status_code=HTTP_201_CREATED,
                 )
-            else:
-                print('METHOD CREATE GO TO ELSE ERROR RESPONSE FORMAT IN VIEWS')
-                
+            else:                
                 return error_response_format(
                     message="Failed to create comment",
                     status_code=HTTP_400_BAD_REQUEST,
                 )
         except Exception as e:
-            print('METHOD CREATE GO TO EXCEPTION ERROR RESPONSE FORMAT IN VIEWS')
-
             return error_response_format(
                 message=str(e),
                 status_code=HTTP_400_BAD_REQUEST,
