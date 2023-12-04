@@ -25,7 +25,6 @@ class ReportAccessor:
     def get_report_of_account(self, account: Account) -> Optional[QuerySet[Report]]:
         try:
             reports = Report.objects.filter(reporter=account)
-            print(reports.all())
             return reports.all()
         except Exception as e:
             return None
@@ -37,13 +36,11 @@ class ReportAccessor:
             report.save()
             return report
         except Report.DoesNotExist:
-            pass
+            return None
 
     def delete_report(self, pk: int) -> Optional[Report]:
         try:
-            print(pk)
             report = Report.objects.get(id=pk)
-            print(report)
             report.delete()
             return report
         except Report.DoesNotExist:

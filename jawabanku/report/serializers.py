@@ -4,9 +4,7 @@ from rest_framework.serializers import (
     SerializerMethodField,
     DateTimeField,
 )
-
 from django.db.models import QuerySet
-
 from .models import Report
 
 from comment.models import Comment
@@ -16,7 +14,6 @@ from comment.serializers import CommentSerializer
 class ReportRelatedField(RelatedField):
     def to_representation(self, value):
         if isinstance(value, Comment):
-            print(type(value.created_at))
             serializer = CommentSerializer(value, many=False)
         else:
             raise Exception("Unexpected type of report related model")

@@ -80,10 +80,8 @@ class ReportViewSet(ViewSet):
 
     @action(methods=["DELETE"], detail=True, url_path="delete")
     def delete_report(self, request, pk=None) -> Response:
-        print(pk)
         try:
             deleted_report = self.report_service.delete_report(pk)
-            print("Hai ", deleted_report)
             if deleted_report:
                 serializer = ReportSerializer(deleted_report, many=False)
                 return success_response_format(
