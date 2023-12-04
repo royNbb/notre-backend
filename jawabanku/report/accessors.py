@@ -8,7 +8,6 @@ from .models import Report
 
 class ReportAccessor:
     def create_report(self, account: Account, **validated_data) -> Optional[Report]:
-        print("masuk kan")
         try:
             report = Report.objects.create(
                 reporter=account,
@@ -19,10 +18,8 @@ class ReportAccessor:
                 ),
                 object_id=validated_data.get("related_model_id"),
             )
-            print("hai jancok")
             return report
         except Exception as e:
-            print("Ini ngab")
             return None
 
     def get_report_of_account(self, account: Account) -> Optional[QuerySet[Report]]:
@@ -43,7 +40,6 @@ class ReportAccessor:
             pass
 
     def delete_report(self, pk: int) -> Optional[Report]:
-        print("sampe sini ga ")
         try:
             print(pk)
             report = Report.objects.get(id=pk)

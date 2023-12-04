@@ -25,14 +25,11 @@ class ReportViewSet(ViewSet):
             reports = self.report_service.get_reports_on_account(request.user)
             # print(reports.first().created_at)
             serializer = ReportSerializer(reports, many=True)
-            print(serializer.data)
             return success_response_format(
                 data=serializer.data,
                 status_code=HTTP_200_OK,
             )  # type: ignore
         except Exception as e:
-            traceback.print_exc()
-            print(e)
             return error_response_format(
                 message=str(e),
                 status_code=HTTP_400_BAD_REQUEST,
@@ -40,13 +37,6 @@ class ReportViewSet(ViewSet):
 
     @action(methods=["POST"], detail=False, url_path="create")
     def create_report(self, request) -> Response:
-        # request_body = {
-        #     "description": request.data.get("description", None),
-        #     "related_model_app_label": request.data.get("comment", None),
-        #     "related_model_name": request.data.get("comment", None),
-        #     "related_model_id": 1,
-        # }
-        # print("abdul" , request_body)
         try:
             report = self.report_service.create_report(request.user, **request.data)
             if report:
@@ -66,7 +56,7 @@ class ReportViewSet(ViewSet):
                 status_code=HTTP_400_BAD_REQUEST,
             )  # type:ignore
 
-    @action(methods=["POST"], detail=True, url_path="update")
+    @action(methods=["PUT"], detail=True, url_path="update")
     def update_report(self, request, pk=None) -> Response:
         status = request.data["status"]
         try:
@@ -88,7 +78,7 @@ class ReportViewSet(ViewSet):
                 status_code=HTTP_400_BAD_REQUEST,
             )  # type:ignore
 
-    @action(methods=["POST"], detail=True, url_path="delete")
+    @action(methods=["DELETE"], detail=True, url_path="delete")
     def delete_report(self, request, pk=None) -> Response:
         print(pk)
         try:
