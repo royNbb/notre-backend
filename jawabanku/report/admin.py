@@ -8,4 +8,4 @@ from .models import Report
 
 @register(Report, site=admin_site)
 class ReportAdmin(ModelAdmin):
-  list_display = ['id', 'description', 'report_of']
+    list_display = ["id", "description", "report_of", "created_at"]

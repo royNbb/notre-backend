@@ -15,8 +15,8 @@ class HistoryAccessor:
     return UserHistory.objects.create(
         owner=account,
         content_type=ContentType.objects.get_by_natural_key(
-            app_label=validated_data.get('related_model_app_label'),
-            model=validated_data.get('related_model_name'),
+            app_label=validated_data.get('related_model_app_label'), # type: ignore
+            model=validated_data.get('related_model_name'), # type: ignore
         ),
         object_id=validated_data.get('related_model_id'),
     )
