@@ -8,12 +8,6 @@ from .models import Report
 
 class ReportAccessor:
     def create_report(self, account: Account, **validated_data) -> Optional[Report]:
-        print("hai")
-        print(validated_data.get("related_model_id"))
-        print(validated_data.get("description"))
-        print(validated_data.get("related_model_name"))
-        print(validated_data.get("related_model_app_label"))
-
         try:
             report = Report.objects.create(
                 reporter=account,

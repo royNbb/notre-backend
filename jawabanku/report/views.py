@@ -23,7 +23,6 @@ class ReportViewSet(ViewSet):
     def get_user_report(self, request) -> Response:
         try:
             reports = self.report_service.get_reports_on_account(request.user)
-            # print(reports.first().created_at)
             serializer = ReportSerializer(reports, many=True)
             return success_response_format(
                 data=serializer.data,
@@ -38,8 +37,6 @@ class ReportViewSet(ViewSet):
     @action(methods=["POST"], detail=False, url_path="create")
     def create_report(self, request) -> Response:
         try:
-            print(request.user)
-            print("inin id nih: ", request.data)
             report = self.report_service.create_report(request.user, **request.data)
             if report:
                 serializer = ReportSerializer(report, many=False)
