@@ -7,7 +7,6 @@ on:
 
 jobs:
   deploy:
-    needs: build-push
     runs-on: ubuntu-latest
     steps:
       - name: SSH into VM
