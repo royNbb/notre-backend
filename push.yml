@@ -1,0 +1,20 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  deploy:
+    needs: build-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into VM
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VM_IP_ADDRESS }}
+          username: ${{ secrets.VM_USER }}
+          password: ${{ secrets.VM_PASSWORD }}
+          script: |
+            whoami
