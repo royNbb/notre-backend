@@ -16,5 +16,4 @@ jobs:
           username: ${{ secrets.VM_USER }}
           password: ${{ secrets.VM_PASSWORD }}
           key: ${{ secrets.VM_PRIVATE_KEY_CONTENT }}
-          script: |
-            whoami
+          script: echo ${{ secrets.VM_PASSPHRASE }} | sudo -S systemctl restart rpl-backend.service
