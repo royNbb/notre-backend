@@ -86,10 +86,12 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
     'http://localhost:3000',
+    'https://api-rpl.freejing.com'
 ]
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://localhost:3000',
+    'https://api-rpl.freejing.com',
 ]
 
 ROOT_URLCONF = 'jawabanku.urls'
@@ -176,7 +178,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / '../staticfiles'
 STATIC_URL = '/static/'
 
 LOGGING_DIR = os.path.join(BASE_DIR, 'logs')
