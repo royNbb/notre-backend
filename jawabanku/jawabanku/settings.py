@@ -45,7 +45,7 @@ SECRET_KEY = "aq8hmxh12&7zzu^1kjcj$uncai8am9!+8$be-ng(xon$k8+t9="
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -81,8 +81,16 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://localhost:8000"]
-CSRF_TRUSTED_ORIGINS = ["http://localhost:3000", "http://localhost:8000"]
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000',
+    'http://localhost:3000',
+    'https://api-rpl.freejing.com'
+]
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'http://localhost:3000',
+    'https://api-rpl.freejing.com',
+]
 
 ROOT_URLCONF = "jawabanku.urls"
 
@@ -109,6 +117,12 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
 
+
+DJOSER = {
+    'SERIALIZERS': {
+        'current_user': 'account.serializers.AccountSerializer',
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -162,7 +176,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / '../staticfiles'
+STATIC_URL = '/static/'
 
 LOGGING_DIR = os.path.join(BASE_DIR, "logs")
 os.makedirs(LOGGING_DIR, exist_ok=True)
