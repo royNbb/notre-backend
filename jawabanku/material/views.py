@@ -148,7 +148,7 @@ class MaterialViewSet(ViewSet):
 
     def retrieve(self, request, pk=None) -> Response:
         try:
-            material = self.material_service.get_material_by_id(pk)
+            material = self.material_service.get_material_by_id(request.user, pk)
 
             if not material:
                 return error_response_format(

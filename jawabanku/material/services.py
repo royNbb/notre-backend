@@ -2,6 +2,7 @@ from typing import Optional
 
 from account.models import Account
 from material.serializers import CreateMaterialSerializer, UpdateMaterialSerializer
+from history.services import HistoryService
 from .models import Category, Material, Tag
 from .accessors import CategoryAccessors, MaterialAccessors, TagAccessors
 from django.db.models import QuerySet
@@ -90,8 +91,14 @@ class CategoryServices:
 class MaterialServices:
     material_accessors = MaterialAccessors()
 
-    def get_material_by_id(self, material_id: int) -> Optional[Material]:
-        return self.material_accessors.get_material_by_id(material_id)
+    def get_material_by_id(self, account, material_id: int) -> Optional[Material]:
+        material = self.material_accessors.get_material_by_id(material_id)
+        HistoryService().create_history(account, **{
+            "related_model_app_label": "material",
+            "related_model_name": "material",
+            "related_model_id": material_id,
+        })
+        return material
 
     def get_all_materials(self, title_query, category_query, tag_query) -> Optional[QuerySet[Material]]:
         return self.material_accessors.get_all_materials(title_query, category_query, tag_query)
