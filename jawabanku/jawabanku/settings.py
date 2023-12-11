@@ -24,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def envbool(s: str, default: str) -> bool:
-    v = os.getenv(s, default=default)
-    if v not in ("", "True", "False"):
-        msg = "Unexpected value %s=%s, use 'True' or 'False'" % (s, v)
-        raise Exception(msg)
+  v = os.getenv(s, default=default)
+  if v not in ("", "True", "False"):
+    msg = "Unexpected value %s=%s, use 'True' or 'False'" % (s, v)
+    raise Exception(msg)
 
-    return v == "True"
+  return v == "True"
 
 
 # Quick-start development settings - unsuitable for production
@@ -84,12 +84,14 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
     'http://localhost:3000',
-    'https://api-rpl.freejing.com'
+    'https://api-rpl.freejing.com',
+    'https://rpl-frontend-freej1ng.vercel.app',
 ]
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://localhost:3000',
     'https://api-rpl.freejing.com',
+    'https://rpl-frontend-freej1ng.vercel.app',
 ]
 
 ROOT_URLCONF = "jawabanku.urls"
@@ -259,4 +261,4 @@ SIMPLE_JWT = {
 
 
 if DEVELOPMENT_ENVIRONMENT:
-    LOGGING["root"]["handlers"].append("console")
+  LOGGING["root"]["handlers"].append("console")

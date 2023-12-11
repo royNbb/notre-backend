@@ -189,7 +189,7 @@ class MaterialViewSet(ViewSet):
 
     def update(self, request, pk=None) -> Response:
         try:
-            material = self.material_service.get_material_by_id(pk)
+            material = self.material_service.get_material_by_id(request.user, pk)
             if not material:
                 return error_response_format(
                     message=f" material with ID {pk} not found",
@@ -223,7 +223,7 @@ class MaterialViewSet(ViewSet):
 
     def destroy(self, request, pk=None) -> Response:
         try:
-            material = self.material_service.get_material_by_id(pk)
+            material = self.material_service.get_material_by_id(request.user, pk)
             if not material:
                 return error_response_format(
                     message=f" material with ID {pk} not found",
