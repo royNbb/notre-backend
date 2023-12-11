@@ -36,7 +36,7 @@ class UserHistorySerializer(ModelSerializer):
 
   class Meta:
     model = UserHistory
-    fields = ['id', 'owner', 'history_of', 'history_type', 'created_at']
+    fields = ['id', 'owner', 'history_of', 'history_type']
 
 
 class CreateUserHistorySerializer(ModelSerializer):
