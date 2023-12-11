@@ -45,7 +45,7 @@ SECRET_KEY = 'aq8hmxh12&7zzu^1kjcj$uncai8am9!+8$be-ng(xon$k8+t9='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -85,9 +85,11 @@ MIDDLEWARE = [
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
+    'http://localhost:3000',
 ]
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
+    'http://localhost:3000',
 ]
 
 ROOT_URLCONF = 'jawabanku.urls'
@@ -115,6 +117,12 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+
+DJOSER = {
+    'SERIALIZERS': {
+        'current_user': 'account.serializers.AccountSerializer',
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases

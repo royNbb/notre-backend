@@ -42,7 +42,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     objects = AccountManager()
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email', 'role']
+    REQUIRED_FIELDS = ['email', 'role', 'name']
 
     @property
     def is_staff(self) -> bool:
