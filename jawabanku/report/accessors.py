@@ -8,6 +8,12 @@ from .models import Report
 
 class ReportAccessor:
     def create_report(self, account: Account, **validated_data) -> Optional[Report]:
+        print("hai")
+        print(validated_data.get("related_model_id"))
+        print(validated_data.get("description"))
+        print(validated_data.get("related_model_name"))
+        print(validated_data.get("related_model_app_label"))
+
         try:
             report = Report.objects.create(
                 reporter=account,
@@ -20,6 +26,7 @@ class ReportAccessor:
             )
             return report
         except Exception as e:
+            print(e)
             return None
 
     def get_report_of_account(self, account: Account) -> Optional[QuerySet[Report]]:
