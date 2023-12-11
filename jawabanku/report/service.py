@@ -36,11 +36,16 @@ class ReportService:
         )
 
         serialized_req = ReportSerializer(data=parsed_data, many=False)  # type: ignore
+
         if serialized_req.is_valid():
+            print(serialized_req.validated_data)
             data = serialized_req.validated_data
             data["related_model_app_label"] = parsed_data.get("related_model_app_label")
             data["related_model_name"] = parsed_data.get("related_model_name")
             data["related_model_id"] = parsed_data.get("related_model_id")
+            print("ini len ini", parsed_data.get("related_model_id"))
+            print("ini len itu", data.get("related_model_id"))
+
             return self.report_accessor.create_report(account, **data)
 
         return None
