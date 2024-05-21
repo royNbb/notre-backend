@@ -15,8 +15,8 @@ class Tag(models.Model):
 
 class Category(models.Model):
     class CategoryType(models.TextChoices):
-        SUBJECT = 'Subject', 'subject'
-        TOPIC = 'Topic', 'topic'
+        MAJOR = 'Major', 'major'
+        CLASS = 'Class', 'class'
     name = models.CharField(max_length=256, unique=True)
     type = models.CharField(max_length=16, choices=CategoryType.choices)
 

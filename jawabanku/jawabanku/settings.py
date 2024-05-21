@@ -21,6 +21,7 @@ load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+env_path = BASE_DIR / '.env'
 
 
 def envbool(s: str, default: str) -> bool:
@@ -40,7 +41,7 @@ DEVELOPMENT_ENVIRONMENT = ENVIRONMENT == "development"
 DEBUG = envbool("DEBUG", "False")
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "aq8hmxh12&7zzu^1kjcj$uncai8am9!+8$be-ng(xon$k8+t9="
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
