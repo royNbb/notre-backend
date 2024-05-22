@@ -26,7 +26,6 @@ class Category(models.Model):
     def __str__(self) -> str:
         return f'Category(name={self.name}, type={self.type})'
 
-#TODO: temporary blank
 class Material(models.Model):
     slug = models.SlugField(max_length=255, db_index=True)
     title = models.CharField(max_length=255)

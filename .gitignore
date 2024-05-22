@@ -38,3 +38,6 @@ mypy_reports/
 .vscode/
 
 .DS_Store
+
+#bucket credential
+credential.json
