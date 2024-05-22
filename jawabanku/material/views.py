@@ -21,7 +21,7 @@ class FileUploadViewSet(ViewSet):
 
     def create(self, request):
         try:
-            BUCKET_NAME = os.getenv('DO_BUCKET_NAME')
+            BUCKET_NAME = os.getenv('GCS_BUCKET_NAME')
             file_obj = request.data['file']
 
             file_data = FileUploadService.upload_file(file_obj, BUCKET_NAME)

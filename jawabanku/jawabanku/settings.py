@@ -263,3 +263,24 @@ SIMPLE_JWT = {
 
 if DEVELOPMENT_ENVIRONMENT:
   LOGGING["root"]["handlers"].append("console")
+
+
+
+print('+++++++++++++++++')
+print(f'{os.path.join(BASE_DIR,'credential.json')}')
+
+### for gcs credential
+from google.oauth2 import service_account
+GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+  os.path.join(BASE_DIR.parent,'credential.json')
+)
+
+GOOGLE_APPLICATION_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+print(GOOGLE_APPLICATION_CREDENTIALS)
+ ###configuration for media file storing and reriving media file from gcloud 
+DEFAULT_FILE_STORAGE='django_blog_project.gcloud.GoogleCloudMediaFileStorage'
+GS_PROJECT_ID = 'notre-v-1 '
+GS_BUCKET_NAME = os.getenv("GCS_BUCKET_NAME")
+MEDIA_ROOT = "media/"
+UPLOAD_ROOT = 'media/uploads/'
+MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(GS_BUCKET_NAME)

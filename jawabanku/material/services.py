@@ -10,6 +10,9 @@ from django.db.models import QuerySet
 import uuid
 from django.core.exceptions import ValidationError
 from mimetypes import guess_type
+from google.cloud import storage
+from google.oauth2 import service_account
+from django.conf import settings
 
 import os
 import uuid
@@ -17,12 +20,6 @@ import boto3
 
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif', 'docx', 'doc', 'ppt', 'pptx', 'xls', 'xlsx', 'txt', 'ipynb', 'py', 'java', 'jav', 'c', 'cpp', 'cs', 'go', 'js', 'ts', 'jsx', 'tsx', 'html', 'css', 'php', 'sql', 'swift', 'rb', 'json', 'xml', }
 MAX_FILE_SIZE_MB = 20
-
-s3 = boto3.client('s3',
-                  region_name=os.getenv('DO_REGION_NAME'),
-                  endpoint_url=os.getenv('DO_ENDPOINT_URL'),
-                  aws_access_key_id=os.getenv('DO_SPACES_KEY'),
-                  aws_secret_access_key=os.getenv('DO_SPACES_SECRET'))
 
 
 class FileUploadService:
@@ -36,6 +33,7 @@ class FileUploadService:
 
             max_size_bytes = MAX_FILE_SIZE_MB * 1024 * 1024
             if file_obj.size > max_size_bytes:
+                print('ukuran file')
                 raise ValidationError("File size exceeds the maximum allowed.")
 
             object_name = f'{random_hex}-{file_obj.name}'
@@ -43,15 +41,41 @@ class FileUploadService:
             content_type, _ = guess_type(file_obj.name)
             content_type = content_type or 'application/octet-stream'
 
-            s3.upload_fileobj(
-                file_obj,
-                bucket_name,
-                object_name,
-                ExtraArgs={'ACL': 'public-read', 'ContentType': content_type}
-            )
+            # Initialize a GCS client
+            print('masu')
+            # Get credentials and bucket name from settings
+            credentials = settings.GS_CREDENTIALS
+            bucket_name = settings.GS_BUCKET_NAME
 
-            file_url = f"https://{bucket_name}.{s3.meta.region_name}.digitaloceanspaces.com/{object_name}"
+            # Initialize a GCS client with credentials
+            storage_client = storage.Client(credentials=credentials)
 
+            # Get the bucket
+            bucket = storage_client.bucket(bucket_name)
+
+            # Create a new blob
+            blob = bucket.blob(object_name)
+
+            # Debugging prints
+            print(f"Uploading file: {file_obj.name}")
+            print(f"Object name: {object_name}")
+            print(f"Content type: {content_type}")
+            
+            # Check if the file_obj is a readable file-like object
+            if hasattr(file_obj, 'read'):
+                print("File object is a readable file-like object.")
+            else:
+                raise ValueError("Provided file object is not readable.")
+            
+            # Ensure the file pointer is at the beginning
+            file_obj.seek(0)
+
+            # Upload the file content
+            blob.upload_from_file(file_obj, content_type=content_type)
+
+            # Construct the public URL manually
+            file_url = f"https://storage.googleapis.com/{bucket_name}/{object_name}"
+            
             return {
                 "file_url": file_url,
                 "content_type": content_type
@@ -59,9 +83,8 @@ class FileUploadService:
         except ValidationError as ve:
             raise ve
         except Exception as e:
+            print(f"Error during file upload: {e}")
             raise e
-
-
 class TagServices:
     tag_accessors = TagAccessors()
 
