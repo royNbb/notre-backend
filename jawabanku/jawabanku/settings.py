@@ -42,7 +42,6 @@ DEBUG = envbool("DEBUG", "False")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -266,13 +265,10 @@ if DEVELOPMENT_ENVIRONMENT:
 
 
 
-print('+++++++++++++++++')
-print(f'{os.path.join(BASE_DIR,'credential.json')}')
-
 ### for gcs credential
 from google.oauth2 import service_account
 GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-  os.path.join(BASE_DIR.parent,'credential.json')
+  os.path.join(BASE_DIR.parent,"credential.json")
 )
 
 GOOGLE_APPLICATION_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
