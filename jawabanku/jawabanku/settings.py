@@ -45,7 +45,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['api.notescentre.com']
 
 # Application definition
 
@@ -84,14 +84,16 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
     'http://localhost:3000',
-    'https://api-rpl.freejing.com',
-    'https://rpl-frontend-freej1ng.vercel.app',
+    'https://api.notescentre.com',
+    'https://www.notescentre.com',
+    'https://notescentre.com',
 ]
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://localhost:3000',
-    'https://api-rpl.freejing.com',
-    'https://rpl-frontend-freej1ng.vercel.app',
+    'https://api.notescentre.com',
+    'https://www.notescentre.com',
+    'https://notescentre.com',
 ]
 
 ROOT_URLCONF = "jawabanku.urls"
