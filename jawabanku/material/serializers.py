@@ -33,6 +33,19 @@ class MaterialSerializer(serializers.ModelSerializer):
         model = Material
         fields = ['id', 'slug', 'title', 'description', 'content', 'owner', 'categories', 'tags', 'created_at', 'updated_at']
 
+class CreateCategorySerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True, max_length=256)
+    type = serializers.ChoiceField(choices=Category.CategoryType.choices, required=True)
+    major = serializers.PrimaryKeyRelatedField(queryset=Category.objects.filter(type=Category.CategoryType.MAJOR), required=False)
+
+    class Meta:
+        model = Category
+        fields = ['name', 'type', 'major']
+
+    def validate(self, data):
+        if data.get('type') == Category.CategoryType.COURSE and not data.get('major'):
+            raise serializers.ValidationError('Course type categories must have a major.')
+        return data
 
 class CreateMaterialSerializer(serializers.ModelSerializer):
     title = CharField(required=True)

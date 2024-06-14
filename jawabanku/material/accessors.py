@@ -38,9 +38,14 @@ class CategoryAccessors:
         except Category.DoesNotExist:
             return None
 
-    def get_all_categories(self) -> Optional[QuerySet[Category]]:
+    def get_all_categories(self, type_query, major_query) -> Optional[QuerySet[Category]]:
         try:
             categories = Category.objects.all()
+
+            if type_query:
+                categories = categories.filter(Q(type=type_query))
+            if major_query:
+                categories = categories.filter(Q(major=major_query)).distinct()
             return categories
         except Category.DoesNotExist:
             return None
@@ -50,6 +55,18 @@ class CategoryAccessors:
             category = Category.objects.get(name=name)
             return category
         except Category.DoesNotExist:
+            return None
+        
+    def create_course(self, account: Account, **validated_data) -> Optional[Category]:
+        try:
+            category = Category.objects.create(
+                name=validated_data.get("name"),
+                type=validated_data.get("type"),
+                major=validated_data.get("major"),
+            )
+            category.save()
+            return category
+        except Exception as e:
             return None
 
 

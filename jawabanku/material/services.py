@@ -1,7 +1,7 @@
 from typing import Optional
 
 from account.models import Account
-from material.serializers import CreateMaterialSerializer, UpdateMaterialSerializer
+from material.serializers import CreateMaterialSerializer, UpdateMaterialSerializer, CreateCategorySerializer
 from history.services import HistoryService
 from .models import Category, Material, Tag
 from .accessors import CategoryAccessors, MaterialAccessors, TagAccessors
@@ -42,7 +42,6 @@ class FileUploadService:
             content_type = content_type or 'application/octet-stream'
 
             # Initialize a GCS client
-            print('masu')
             # Get credentials and bucket name from settings
             credentials = settings.GS_CREDENTIALS
             bucket_name = settings.GS_BUCKET_NAME
@@ -55,11 +54,6 @@ class FileUploadService:
 
             # Create a new blob
             blob = bucket.blob(object_name)
-
-            # Debugging prints
-            print(f"Uploading file: {file_obj.name}")
-            print(f"Object name: {object_name}")
-            print(f"Content type: {content_type}")
             
             # Check if the file_obj is a readable file-like object
             if hasattr(file_obj, 'read'):
@@ -97,19 +91,32 @@ class TagServices:
     def get_tag_by_name(self, name: str) -> Optional[Tag]:
         return self.tag_accessors.get_tag_by_name(name)
 
-
 class CategoryServices:
     category_accessors = CategoryAccessors()
 
     def get_category_by_id(self, category_id: int) -> Optional[Category]:
         return self.category_accessors.get_category_by_id(category_id)
 
-    def get_all_categories(self) -> Optional[QuerySet[Category]]:
-        return self.category_accessors.get_all_categories()
-
+    def get_all_categories(self, type_query: str, major_query: int) -> Optional[QuerySet[Category]]:
+        return self.category_accessors.get_all_categories(type_query, major_query)
+    
     def get_category_by_name(self, name: str) -> Optional[Category]:
         return self.category_accessors.get_category_by_name(name)
-
+        
+    def create_course(self, account: Account, **kwargs) -> Optional[Category]:
+        parsed_data = {}
+        if kwargs.get('name', None):
+            parsed_data['name'] = kwargs.get('name')
+        if kwargs.get('major', None):
+            parsed_data['major'] = kwargs.get('major')
+        parsed_data['type'] = 'Course'
+        
+        serialized_req = CreateCategorySerializer(data=parsed_data, many=False)
+        if serialized_req.is_valid():
+            data = serialized_req.validated_data
+            return self.category_accessors.create_course(account, **data)
+        
+        return None
 
 class MaterialServices:
     material_accessors = MaterialAccessors()

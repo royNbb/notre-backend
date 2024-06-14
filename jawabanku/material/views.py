@@ -84,10 +84,14 @@ class TagViewSet(ViewSet):
 
 class CategoryViewSet(ViewSet):
     category_service = CategoryServices()
-
+        
     def list(self, request) -> Response:
         try:
-            categories = self.category_service.get_all_categories()
+            type_query = self.request.query_params.get('type', "")
+            major_query = self.request.query_params.get('major', "")
+
+            categories = self.category_service.get_all_categories(type_query, major_query)
+
             serializer = CategorySerializer(categories, many=True)
 
             return success_response_format(
@@ -99,6 +103,7 @@ class CategoryViewSet(ViewSet):
                 message=str(e),
                 status_code=HTTP_400_BAD_REQUEST,
             )
+    
 
     def retrieve(self, request, pk=None) -> Response:
         try:
@@ -120,7 +125,27 @@ class CategoryViewSet(ViewSet):
                 message=str(e),
                 status_code=HTTP_400_BAD_REQUEST,
             )
+        
+    def create(self, request) -> Response:
+        try:
+            course = self.category_service.create_course(request.user, **request.data)
+            if course:
+                serializer = CategorySerializer(course)
 
+                return success_response_format(
+                    data=serializer.data,
+                    status_code=HTTP_201_CREATED,
+                )
+            else:
+                return error_response_format(
+                    message="Failed to create category",
+                    status_code=HTTP_400_BAD_REQUEST,
+                )
+        except Exception as e:
+            return error_response_format(
+                message=str(e),
+                status_code=HTTP_400_BAD_REQUEST,
+            )
 
 class MaterialViewSet(ViewSet):
     material_service = MaterialServices()
